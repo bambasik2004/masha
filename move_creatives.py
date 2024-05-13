@@ -1,9 +1,8 @@
 import os
-import sys
 import shutil
 import pandas as pd
 
-# const
+# Название полей таблицы с брендами и тп
 field_name_advertisers = 'ADVERTISERS LIST'
 field_name_brands = 'BRANDS'
 field_name_advertisers_sub_brand = 'SUBBRANDS'
@@ -11,10 +10,10 @@ field_name_advertisers_sub_brand = 'SUBBRANDS'
 
 def main(path_to_dir, excel_path):
     df = pd.read_excel(excel_path)
-    # create dir for result
+    # Создаем папку по результаты
     if not os.path.exists(rf'{os.path.dirname(path_to_dir)}/result'):
         os.makedirs(rf'{os.path.dirname(path_to_dir)}/result')
-    # create dirs with sorted creatives by advertisers
+    # Раскидываем креативы по папкам
     for creative in os.listdir(path_to_dir):
         move = False
         for index, row in df.iterrows():

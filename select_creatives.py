@@ -1,37 +1,27 @@
 import os
 import cv2
-import numpy as np
-
-def compare_color_histograms(hist1, hist2):
-    # Вычисляем гистограммы совпадений для цветов
-    match_percent = cv2.compareHist(hist1, hist2, cv2.HISTCMP_CORREL)
-    return match_percent
 
 
 def video_comparison(path1, path2):
+    '''
+    Сравниваем 2 первых кадра, если будет плохо работать добавить еще кадров в цикле
+    '''
     video1 = cv2.VideoCapture(path1)
     video2 = cv2.VideoCapture(path2)
     ret1, frame1 = video1.read()
     ret2, frame2 = video2.read()
     if ret1 and ret2:
-        # Преобразуем кадры в пространство цветов RGB
         frame1_rgb = cv2.cvtColor(frame1, cv2.COLOR_BGR2RGB)
         frame2_rgb = cv2.cvtColor(frame2, cv2.COLOR_BGR2RGB)
-        # Вычисляем гистограммы цветов для каждого кадра
         hist1 = cv2.calcHist([frame1_rgb], [0, 1, 2], None, [8, 8, 8], [0, 256, 0, 256, 0, 256])
         hist2 = cv2.calcHist([frame2_rgb], [0, 1, 2], None, [8, 8, 8], [0, 256, 0, 256, 0, 256])
-        # Нормализуем гистограммы
         cv2.normalize(hist1, hist1, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX)
         cv2.normalize(hist2, hist2, alpha=0, beta=1, norm_type=cv2.NORM_MINMAX)
-        # Сравниваем гистограммы цветов
-        match_percent = compare_color_histograms(hist1, hist2)
-        # print("Процент совпадения цветов между первыми кадрами двух видео:", match_percent * 100, "%")
-        # Освобождаем ресурсы
+        match_percent = cv2.compareHist(hist1, hist2, cv2.HISTCMP_CORREL)
         video1.release()
         video2.release()
         return match_percent * 100
     else:
-        # print("Не удалось загрузить кадры из одного или обоих видео")
         return None
 
 
